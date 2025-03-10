@@ -29,17 +29,25 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Meal Planner</h1>
-      <FormAddMeal onAddMeal={handleAddMeal} />
-      <MealList meals={meals} />
-      <WeeklyPlan
-        meals={meals}
-        weeklyPlan={weeklyPlan}
-        onAddToPlan={handleAddToPlan}
-      />
-      <ShoppingList weeklyPlan={weeklyPlan} />
-      <Stats meals={meals} />
+    <div className="min-h-screen bg-gray-100 text-gray-800 p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center text-blue-600">
+        Meal Planner
+      </h1>
+      <h2 className="text-red-500">
+        Ако този текст е червен, Tailwind работи!
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <FormAddMeal onAddMeal={handleAddMeal} />
+        <MealList meals={meals} />
+        <Stats meals={meals} />
+        <WeeklyPlan
+          meals={meals}
+          weeklyPlan={weeklyPlan}
+          onAddToPlan={handleAddToPlan}
+        />
+        <ShoppingList weeklyPlan={weeklyPlan} />
+      </div>
     </div>
   );
 }
