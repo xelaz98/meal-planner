@@ -19,22 +19,26 @@ function App() {
   });
   const [editingMeal, setEditingMeal] = useState(null);
 
-  // 📌 Зареждане на данни от Local Storage при стартиране
   useEffect(() => {
     const storedMeals = localStorage.getItem("meals");
     const storedPlan = localStorage.getItem("weeklyPlan");
-    if (storedMeals) setMeals(JSON.parse(storedMeals));
-    if (storedPlan) setWeeklyPlan(JSON.parse(storedPlan));
+
+    try {
+      if (storedMeals) setMeals(JSON.parse(storedMeals));
+      if (storedPlan) setWeeklyPlan(JSON.parse(storedPlan));
+    } catch (error) {
+      console.error("Invalid data in Local Storage, resetting...");
+      localStorage.removeItem("meals");
+      localStorage.removeItem("weeklyPlan");
+    }
   }, []);
 
-  // 📌 Съхранение на ястията в Local Storage
   useEffect(() => {
     if (meals.length > 0) {
       localStorage.setItem("meals", JSON.stringify(meals));
     }
   }, [meals]);
 
-  // 📌 Съхранение на седмичния план в Local Storage
   useEffect(() => {
     if (Object.values(weeklyPlan).flat().length > 0) {
       localStorage.setItem("weeklyPlan", JSON.stringify(weeklyPlan));
@@ -54,20 +58,6 @@ function App() {
     setEditingMeal(meal);
   };
 
-  const handleDeleteMeal = (mealId) => {
-    if (window.confirm("Are you sure you want to delete this meal?")) {
-      setMeals(meals.filter((meal) => meal.id !== mealId));
-      setWeeklyPlan((prevPlan) => {
-        const newPlan = { ...prevPlan };
-        Object.keys(newPlan).forEach((day) => {
-          newPlan[day] = newPlan[day].filter((meal) => meal.id !== mealId);
-        });
-        return newPlan;
-      });
-    }
-  };
-
-  // 📌 Функция за добавяне на ястие към ден от седмицата
   const handleAddToPlan = (day, meal) => {
     setWeeklyPlan((prevPlan) => ({
       ...prevPlan,
@@ -79,11 +69,7 @@ function App() {
     <div className="container">
       <h1 className="text-center text-blue">Meal Planner</h1>
       <FormAddMeal onAddMeal={handleAddMeal} editingMeal={editingMeal} />
-      <MealList
-        meals={meals}
-        onEditMeal={handleEditMeal}
-        onDeleteMeal={handleDeleteMeal}
-      />
+      <MealList meals={meals} onEditMeal={handleEditMeal} />
       <WeeklyPlan
         meals={meals}
         weeklyPlan={weeklyPlan}

@@ -176,3 +176,37 @@ div {
 .btn-delete:hover {
   background-color: #c0392b;
 }
+
+/* Плавни преходи при добавяне на ястия */
+.card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-group input,
+.form-group select {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+  border-color: #3498db;
+}

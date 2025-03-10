@@ -11,6 +11,13 @@ export default function MealList({ meals, onEditMeal, onDeleteMeal }) {
     return true;
   });
 
+  const handleDelete = (mealId) => {
+    const meal = meals.find((m) => m.id === mealId);
+    if (window.confirm(`Are you sure you want to delete "${meal.name}"?`)) {
+      onDeleteMeal(mealId);
+    }
+  };
+
   return (
     <div className="card">
       <h2 className="text-center">Meal List</h2>
@@ -44,7 +51,7 @@ export default function MealList({ meals, onEditMeal, onDeleteMeal }) {
                   Edit
                 </button>
                 <button
-                  onClick={() => onDeleteMeal(meal.id)}
+                  onClick={() => handleDelete(meal.id)}
                   className="btn-delete"
                 >
                   Delete
