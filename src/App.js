@@ -5,12 +5,26 @@ import WeeklyPlan from "./components/WeeklyPlan";
 import ShoppingList from "./components/ShoppingList";
 
 function App() {
-  // useState за списъка с ястия
   const [meals, setMeals] = useState([]);
+  const [weeklyPlan, setWeeklyPlan] = useState({
+    Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: [],
+  });
 
-  // Функция за добавяне на ново ястие
   const handleAddMeal = (meal) => {
     setMeals((prevMeals) => [...prevMeals, meal]);
+  };
+
+  const handleAddToPlan = (day, meal) => {
+    setWeeklyPlan((prevPlan) => ({
+      ...prevPlan,
+      [day]: [...prevPlan[day], meal],
+    }));
   };
 
   return (
@@ -18,8 +32,12 @@ function App() {
       <h1>Meal Planner</h1>
       <FormAddMeal onAddMeal={handleAddMeal} />
       <MealList meals={meals} />
-      <WeeklyPlan meals={meals} />
-      <ShoppingList meals={meals} />
+      <WeeklyPlan
+        meals={meals}
+        weeklyPlan={weeklyPlan}
+        onAddToPlan={handleAddToPlan}
+      />
+      <ShoppingList weeklyPlan={weeklyPlan} />
     </div>
   );
 }
