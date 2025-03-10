@@ -3,6 +3,7 @@ import MealList from "./components/MealList";
 import FormAddMeal from "./components/FormAddMeal";
 import WeeklyPlan from "./components/WeeklyPlan";
 import ShoppingList from "./components/ShoppingList";
+import Stats from "./components/Stats";
 
 function App() {
   const [meals, setMeals] = useState([]);
@@ -38,6 +39,7 @@ function App() {
         onAddToPlan={handleAddToPlan}
       />
       <ShoppingList weeklyPlan={weeklyPlan} />
+      <Stats meals={meals} />
     </div>
   );
 }
