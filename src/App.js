@@ -18,6 +18,7 @@ function App() {
     Sunday: [],
   });
   const [editingMeal, setEditingMeal] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedMeals = localStorage.getItem("meals");
@@ -30,24 +31,27 @@ function App() {
       console.error("Invalid data in Local Storage, resetting...");
       localStorage.removeItem("meals");
       localStorage.removeItem("weeklyPlan");
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    if (meals.length > 0) {
-      localStorage.setItem("meals", JSON.stringify(meals));
-    }
-  }, [meals]);
-
-  useEffect(() => {
-    if (Object.values(weeklyPlan).flat().length > 0) {
-      localStorage.setItem("weeklyPlan", JSON.stringify(weeklyPlan));
-    }
-  }, [weeklyPlan]);
-
   const handleAddMeal = (meal) => {
     if (editingMeal) {
+      // 📌 Актуализираме ястието в Meal List
       setMeals(meals.map((m) => (m.id === editingMeal.id ? meal : m)));
+
+      // 📌 Актуализираме ястието в Weekly Plan ако го има
+      setWeeklyPlan((prevPlan) => {
+        const newPlan = { ...prevPlan };
+        Object.keys(newPlan).forEach((day) => {
+          newPlan[day] = newPlan[day].map((m) =>
+            m.id === editingMeal.id ? { ...m, name: meal.name } : m
+          );
+        });
+        return newPlan;
+      });
+
       setEditingMeal(null);
     } else {
       setMeals((prevMeals) => [...prevMeals, meal]);
@@ -58,6 +62,17 @@ function App() {
     setEditingMeal(meal);
   };
 
+  const handleDeleteMeal = (mealId) => {
+    setMeals(meals.filter((meal) => meal.id !== mealId));
+    setWeeklyPlan((prevPlan) => {
+      const newPlan = { ...prevPlan };
+      Object.keys(newPlan).forEach((day) => {
+        newPlan[day] = newPlan[day].filter((meal) => meal.id !== mealId);
+      });
+      return newPlan;
+    });
+  };
+
   const handleAddToPlan = (day, meal) => {
     setWeeklyPlan((prevPlan) => ({
       ...prevPlan,
@@ -65,15 +80,31 @@ function App() {
     }));
   };
 
+  const handleRemoveFromPlan = (day, mealId) => {
+    setWeeklyPlan((prevPlan) => ({
+      ...prevPlan,
+      [day]: prevPlan[day].filter((meal) => meal.id !== mealId),
+    }));
+  };
+
+  if (loading) {
+    return <div className="loader">Loading...</div>;
+  }
+
   return (
     <div className="container">
       <h1 className="text-center text-blue">Meal Planner</h1>
       <FormAddMeal onAddMeal={handleAddMeal} editingMeal={editingMeal} />
-      <MealList meals={meals} onEditMeal={handleEditMeal} />
+      <MealList
+        meals={meals}
+        onEditMeal={handleEditMeal}
+        onDeleteMeal={handleDeleteMeal}
+      />
       <WeeklyPlan
         meals={meals}
         weeklyPlan={weeklyPlan}
         onAddToPlan={handleAddToPlan}
+        onRemoveFromPlan={handleRemoveFromPlan}
       />
       <ShoppingList weeklyPlan={weeklyPlan} />
       <Stats meals={meals} />

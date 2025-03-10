@@ -1,6 +1,11 @@
 import React from "react";
 
-export default function WeeklyPlan({ meals, weeklyPlan, onAddToPlan }) {
+export default function WeeklyPlan({
+  meals,
+  weeklyPlan,
+  onAddToPlan,
+  onRemoveFromPlan,
+}) {
   const days = Object.keys(weeklyPlan);
 
   return (
@@ -11,7 +16,17 @@ export default function WeeklyPlan({ meals, weeklyPlan, onAddToPlan }) {
           <h3 className="text-blue">{day}</h3>
           <ul>
             {weeklyPlan[day].length > 0 ? (
-              weeklyPlan[day].map((meal) => <li key={meal.id}>{meal.name}</li>)
+              weeklyPlan[day].map((meal) => (
+                <li key={meal.id} className="flex justify-between items-center">
+                  <span>{meal.name}</span>
+                  <button
+                    onClick={() => onRemoveFromPlan(day, meal.id)}
+                    className="btn-delete"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))
             ) : (
               <p>No meals planned for {day}.</p>
             )}
@@ -21,6 +36,7 @@ export default function WeeklyPlan({ meals, weeklyPlan, onAddToPlan }) {
               onChange={(e) => {
                 const meal = meals.find((m) => m.id === e.target.value);
                 if (meal) onAddToPlan(day, meal);
+                e.target.value = ""; // Изчистване на избора след добавяне
               }}
             >
               <option value="">Add a meal...</option>
